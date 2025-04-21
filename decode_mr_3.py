@@ -1,12 +1,13 @@
 import pyparsing as pp
 
 
-#.venv\Scripts\activate
+# .venv\Scripts\activate
 def to3bit(x):
     res = str(bin(int(x))[2:])
     while len(res) < 3:
         res = '0' + res
     return res
+
 
 def to_four_digit_hex_number(x):
     res = str(hex(int(x)))[2:]
@@ -14,18 +15,19 @@ def to_four_digit_hex_number(x):
         res = '0' + res
     return res
 
-#Пока без label (лейблы могут быть, но они никак не обрабатываются и не записываются в машинный код)
+
+# Пока без label (лейблы могут быть, но они никак не обрабатываются и не записываются в машинный код)
 
 command_description = {
     # Однобайтовые команды
     'halt': {
-        'opcode': '0' * 16,  #Код операции MOV (в hex)
+        'opcode': '0' * 16,  # Код операции MOV (в hex)
         'args': []
     },
     # Двухадресные команды
     'mov': {
         'opcode': '0001',
-        'args': ['mr', 'mr']  #ss = mr, dd = mr - mode, register
+        'args': ['mr', 'mr']  # ss = mr, dd = mr - mode, register
     },
     'add': {
         'opcode': '0110',
@@ -33,8 +35,10 @@ command_description = {
     },
 }
 
+
 def get_command_by_name(name):
     return command_description[name]
+
 
 def to16bit(x):
     res = bin(x)[2:]
@@ -42,36 +46,39 @@ def to16bit(x):
         res = '0' + res
     return res
 
+
 def from8to10(s):
     x = 0
     s = s[::-1]
     for i in range(len(s)):
-        x += int(s[i]) * 8**i
+        x += int(s[i]) * 8 ** i
     return x
 
+
 def from8to16bit(s):
-    return  to16bit(from8to10(s))
+    return to16bit(from8to10(s))
+
 
 mode_reg = (
-    pp.Regex(r'^R[1-7]$')('000') | # R3, mode = '000'
-    pp.Regex(r'^\(R[1-7]\)$')('001') |  # (R3), mode = '001'
-    pp.Regex(r'^\(R[1-7]\)\+$')('010') | # (R3)+, mode = '010'
-    pp.Regex(r'^@\(R[1-7]\)\+$')('011') | # @(R3)+, mode = '011'
-    pp.Regex(r'^-\(R[1-7]\)$')('100') | # -(R3), mode = '100'
-    pp.Regex(r'^@-\(R[1-7]\)$')('101') | # @-(R3), mode = '101',
-    pp.Regex(r'^[1-7]+\(R[1-7]\)$')('110') | # 2(R3), mode = '110'
-    pp.Regex(r'^@[1-7]+\(R[1-7]\)$')('111') | # @2(R3), mode = '111'
-    pp.Regex(r'^#[0-7]+$')('010' + '111') | # #3, mode = '010'
-    pp.Regex(r'^@#[0-7]+')('011' + '111') | # @#100, mode = '011'
-    pp.Regex(r'^[0-7]+')('110' + '111') | # 100, mode = '110'
-    pp.Regex(r'^@[0-7]+')('111' + '111')  # @100, mode = '111'
+        pp.Regex(r'^R[1-7]$').setParseAction(lambda t: f'000{to3bit(t[0][1])}')('code') |  # R3, mode = '000'
+        pp.Regex(r'^\(R[1-7]\)$').setParseAction(lambda t: f'001{to3bit(t[0][2])}')('code') |  # (R3), mode = '001'
+        pp.Regex(r'^\(R[1-7]\)\+$').setParseAction(lambda t: f'010{to3bit(t[0][2])}')('code') |  # (R3)+, mode = '010'
+        pp.Regex(r'^@\(R[1-7]\)\+$').setParseAction(lambda t: f'011{to3bit(t[0][3])}')('code') |  # @(R3)+, mode = '011'
+        pp.Regex(r'^-\(R[1-7]\)$').setParseAction(lambda t: f'100{to3bit(t[0][3])}')('code') |  # -(R3), mode = '100'
+        pp.Regex(r'^@-\(R[1-7]\)$').setParseAction(lambda t: f'101{to3bit(t[0][4])}')('code') |  # @-(R3), mode = '101',
+        pp.Regex(r'^[1-7]+\(R[1-7]\)$').setParseAction(lambda t: f'110{to3bit(t[0][-2]) + from8to16bit(t[0][:-4])}')('code') |  # 2(R3), mode = '110'
+        pp.Regex(r'^@[1-7]+\(R[1-7]\)$').setParseAction(lambda t: f'111{to3bit(t[0][-2]) + from8to16bit(t[0][1:-4])}')('code') |  # @2(R3), mode = '111'
+        pp.Regex(r'^#[0-7]+$').setParseAction(lambda t: f'010111{from8to16bit(t[0][1:])}')('code') |  # #3, mode = '010'
+        pp.Regex(r'^@#[0-7]+').setParseAction(lambda t: f'011111{from8to16bit(t[0][2:])}')('code') |  # @#100, mode = '011'
+        pp.Regex(r'^[0-7]+').setParseAction(lambda t: f'110111{from8to16bit(t[0])}')('code') |  # 100, mode = '110'
+        pp.Regex(r'^@[0-7]+').setParseAction(lambda t: f'111111{from8to16bit(t[0][1:])}')('code')  # @100, mode = '111'
 
 )
-#runtests!
+# runtests!
 
 
 mode_reg.runTests('''
-R3
+R7
 (R3)
 (R3)+
 @(R3)+
@@ -83,66 +90,12 @@ R3
 @#100
 100
 @100
-''' )
+''')
 print()
-#Отдельно для #100 - потому что в untests
+# Отдельно для #100 - потому что в untests
 res = mode_reg.parseString('#7777')
 print(res)
 print('010111' in res)
-
-
-
-"""
-def decode_mr_arg(arg):
-    additional_word = ''
-    mode = ''
-    register = ''
-    if arg[0] == 'r': # R3
-        mode = '000'
-        register = to3bit(arg[1])
-    elif  arg[0] == '(' and arg[-1] == ')': # (R3)
-        mode = '001'
-        register = to3bit(arg[2])
-    elif arg[0] == '(' and arg[-1] == '+': # (R3)+
-        mode = '010'
-        register = to3bit(arg[2])
-    elif arg[0] == '@' and arg[-1] == '+': # @(R3)+
-        mode = '011'
-        register = to3bit(arg[3])
-    elif arg[0] == '-':  # -(R3)
-        mode = '100'
-        register = to3bit(arg[3])
-    elif arg[0] == '@' and arg[1] == '-': # @-(R3)
-        mode = '101'
-        register = to3bit(arg[4])
-    elif arg[0] == '@' and arg[-1] == ')': # @2(R3)
-        mode = '111'
-        register = to3bit(arg[-2])
-        additional_word = from8to16bit(arg[1:-4])
-    elif arg[0] in '01234567' and arg[-1] == ')': # 2(R3)
-        mode = '110'
-        register = to3bit(arg[-2])
-        additional_word = from8to16bit(arg[:-4])
-    elif arg[0] == '#': # #3
-        mode = '010'
-        register = '111'
-        additional_word = from8to16bit(arg[1:])
-    elif arg[0] == '@' and arg[1] == '#': # @#100
-        mode = '011'
-        register = '111'
-        additional_word = from8to16bit(arg[2:])
-    elif arg[0] == '@' and arg[1] != '#': # @100
-        mode = '111'
-        register = '111'
-        additional_word = from8to16bit(arg[1:])
-        
-    elif arg[0] in '01234567': # 100
-        mode = '110'
-        register = '111'
-        additional_word = from8to16bit(arg)
-    code_arg = mode + register
-    return code_arg, additional_word
-"""
 
 
 """
