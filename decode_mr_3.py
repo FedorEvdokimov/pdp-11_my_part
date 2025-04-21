@@ -92,10 +92,9 @@ R7
 @100
 ''')
 print()
-# Отдельно для #100 - потому что в untests
-res = mode_reg.parseString('#7777')
+print("Отдельно для #10 - потому что в runtests это считывается как комментарий из-за значка # в начале строки")
+res = mode_reg.parseString('#10')
 print(res)
-print('010111' in res)
 
 
 """
