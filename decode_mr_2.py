@@ -53,22 +53,38 @@ def from8to10(s):
 def from8to16bit(s):
     return  to16bit(from8to10(s))
 
-modes = (
+mode_reg = (
     pp.Regex(r'^R[1-7]$')('000') | # R3, mode = '000'
     pp.Regex(r'^\(R[1-7]\)$')('001') |  # (R3), mode = '001'
-    pp.Regex(r'^\(R[1-7]\)+$')('010') | # (R3)+, mode = '010'
+    pp.Regex(r'^\(R[1-7]\)\+$')('010') | # (R3)+, mode = '010'
     pp.Regex(r'^@\(R[1-7]\)\+$')('011') | # @(R3)+, mode = '011'
     pp.Regex(r'^-\(R[1-7]\)$')('100') | # -(R3), mode = '100'
     pp.Regex(r'^@-\(R[1-7]\)$')('101') | # @-(R3), mode = '101',
     pp.Regex(r'^[1-7]+\(R[1-7]\)$')('110') | # 2(R3), mode = '110'
     pp.Regex(r'^@[1-7]+\(R[1-7]\)$')('111') | # @2(R3), mode = '111'
-    pp.Regex(r'') | # #3
+    #Ниже регистр у всех равен '111'
+    pp.Regex(r'^#[0-7]+$')('010' + '111') | # #3, mode = '010'
+    pp.Regex(r'^@#[0-7]+')('011' + '111') | # @#100, mode = '011'
+    pp.Regex(r'^[0-7]+')('110' + '111') | # 100, mode = '110'
+    pp.Regex(r'^@[0-7]+')('111' + '111')  # @100, mode = '111'
+
 )
 #runtests!
 
-result = modes.parseString('(RR)', parseAll=True)
-print(result)
-print(next(name for name in ['000', '001', '010', '011', '100', '101', '110', '111'] if name in result))
+mode_reg.runTests('''
+R3
+(R3)
+(R3)+
+@(R3)+
+-(R3)
+@-(R3)
+277(R3)
+@26(R3)
+#7777
+@#100
+100
+@100
+''' )
 
 
 
@@ -103,7 +119,6 @@ def decode_mr_arg(arg):
         mode = '110'
         register = to3bit(arg[-2])
         additional_word = from8to16bit(arg[:-4])
-        
     elif arg[0] == '#': # #3
         mode = '010'
         register = '111'
@@ -116,6 +131,7 @@ def decode_mr_arg(arg):
         mode = '111'
         register = '111'
         additional_word = from8to16bit(arg[1:])
+        
     elif arg[0] in '01234567': # 100
         mode = '110'
         register = '111'
