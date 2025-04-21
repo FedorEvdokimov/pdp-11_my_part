@@ -1,5 +1,4 @@
 import pyparsing as pp
-import re
 
 
 #.venv\Scripts\activate
@@ -62,7 +61,6 @@ mode_reg = (
     pp.Regex(r'^@-\(R[1-7]\)$')('101') | # @-(R3), mode = '101',
     pp.Regex(r'^[1-7]+\(R[1-7]\)$')('110') | # 2(R3), mode = '110'
     pp.Regex(r'^@[1-7]+\(R[1-7]\)$')('111') | # @2(R3), mode = '111'
-    #Ниже регистр у всех равен '111'
     pp.Regex(r'^#[0-7]+$')('010' + '111') | # #3, mode = '010'
     pp.Regex(r'^@#[0-7]+')('011' + '111') | # @#100, mode = '011'
     pp.Regex(r'^[0-7]+')('110' + '111') | # 100, mode = '110'
@@ -70,6 +68,7 @@ mode_reg = (
 
 )
 #runtests!
+
 
 mode_reg.runTests('''
 R3
@@ -85,6 +84,11 @@ R3
 100
 @100
 ''' )
+print()
+#Отдельно для #100 - потому что в untests
+res = mode_reg.parseString('#7777')
+print(res)
+print('010111' in res)
 
 
 
