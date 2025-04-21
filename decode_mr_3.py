@@ -86,40 +86,12 @@ R7
 @-(R3)
 277(R3)
 @26(R3)
-#7777
+#100
 @#100
 100
 @100
 ''')
 print()
-print("Отдельно для #10 - потому что в runtests это считывается как комментарий из-за значка # в начале строки")
-res = mode_reg.parseString('#10')
+print("Отдельно для #100 - потому что в runtests это считывается как комментарий из-за значка # в начале строки")
+res = mode_reg.parseString('#100')
 print(res)
-
-
-"""
-import pyparsing as pp
-import re
-
-# Создаем парсеры для каждой моды с сохранением типа
-modes = (
-    pp.Regex(r'^a', re.IGNORECASE)('mode0') |  # mode0 если начинается на a/A
-    pp.Regex(r'^b', re.IGNORECASE)('mode1') |  # mode1 если начинается на b/B
-    pp.Regex(r'^c', re.IGNORECASE)('mode2')    # mode2 если начинается на c/C
-)
-
-# Функция для определения моды
-def determine_mode(word):
-    try:
-        result = modes.parseString(word, parseAll=False)
-        print("result:",result)
-        return next(name for name in ['mode0', 'mode1', 'mode2'] if name in result)
-    except:
-        return "UNKNOWN"
-
-# Тестирование
-test_words = ["apple", "Banana", "cherry", "123", " dog", "Carrot", "boat"]
-for word in test_words:
-    print(f"{word!r}: {determine_mode(word)}")
-    print()
-"""
