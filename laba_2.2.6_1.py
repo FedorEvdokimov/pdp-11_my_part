@@ -24,6 +24,73 @@ t =  np.array([
     26.88
 ])
 
+def SIro(rox): #ля шариков, СИ
+    return rox * 10**(-3) / (0.01)**3
+
+
+ro = SIro(2.6)
+def nu(v, R, roi):
+    g = 9.8
+    nu = 2/9 * g * R**2 * (ro - roi) / v
+    return nu
+
+
 v = h / t
 v = np.round(v, 4)
-print(v)
+print("v:", v)
+
+
+v1 = v[:5]
+print("v1:", v1)
+ro1 = SIro(1.2390)
+R1 = np.array([
+    1.14,
+    1.10,
+    1.20,
+    1.24,
+    1.19
+]) * 0.001 / 2 #мм в метры
+nu1 = nu(v1, R1, ro1)
+nu1 = np.round(nu1, 2)
+print("nu1:", nu1)
+
+v2 = v[5:10]
+ro2 = SIro(1.2377)
+R2 = np.array([
+    1.13,
+    1.20,
+    1.14,
+    1.09,
+    1.10
+]) * 0.001 / 2
+nu2 = nu(v2, R2, ro2)
+nu2 = np.round(nu2, 2)
+print("nu2:", nu2)
+
+
+v3 = v[10:15]
+ro3 = SIro(1.2344)
+R3 = np.array([
+    1.18,
+    1.05,
+    1.13,
+    1.17,
+    1.11
+]) * 0.001 / 2
+nu3 = nu(v3, R3, ro3)
+nu3 = np.round(nu3, 2)
+print("nu3:", nu3)
+
+v4 = v[15:]
+ro4 = SIro(1.2312)
+R4 = np.array([
+    1.15,
+    1.14,
+    1.24,
+    1.36,
+    1.23
+]) * 0.001 / 2
+nu4 = nu(v4, R4, ro4)
+nu4 = np.round(nu4, 2)
+print("nu4:", nu4)
+
