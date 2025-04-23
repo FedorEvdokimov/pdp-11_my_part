@@ -126,5 +126,44 @@ Re4 = Re(v4, R4, nu4)
 S4 = v4 * Tau4
 
 
+def MNK(x, y):
+    N = 20
+    Sx = np.sum(x)
+    Sy = np.sum(y)
+    Sx2 = np.sum(x**2)
+    Sxy = 0
+    for i in range(N):
+        Sxy += x[i] * y[i]
+    a = (N * Sxy - Sx * Sy) / (N * Sx2 - Sx**2)
+    b = (Sy - a*Sx) / N
+    return a, b
+
+
+lnu1 = np.log(nu1)
+lnu2 = np.log(nu2)
+lnu3 = np.log(nu3)
+lnu4 = np.log(nu4)
+lnu = np.hstack((lnu1, lnu2, lnu3, lnu4))
+
+T1 = 28.57
+T2 = 32.00
+T3 = 36.00
+T4 = 40.00
+
+ar1 = [1 / T1] * 5
+ar2 = [1 / T2] * 5
+ar3 = [1 / T3] * 5
+ar4 = [1 / T4] * 5
+ar1 = np.array(ar1)
+ar2 = np.array(ar2)
+ar3 = np.array(ar3)
+ar4 = np.array(ar4)
+arx = np.hstack((ar1, ar2, ar3, ar4))
+print(arx)
+
+a, b = MNK(arx, lnu)
+print("a b:", a, b)
+
+
 
 
