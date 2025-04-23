@@ -172,8 +172,11 @@ print("W:", W, "Джоулей") #в Джоулях
 
 mean_lnu = np.mean(lnu)
 mean_lnu2 = np.mean(lnu**2)
-mean_divT = np.mean(arx)
-mean_divT2 = np.mean(arx**2)
+mean_arx = np.mean(arx)
+mean_arx2 = np.mean(arx**2)
 
-sigma_a = (mean_lnu2 - mean_lnu**2) / (mean_divT2 - mean_divT**2 - k**2 / N)
+sigma_a = (mean_lnu2 - mean_lnu**2) / (mean_arx2 - mean_arx**2) - a**2
+sigma_a = np.sqrt(sigma_a / N)
 print("sigma_a:", sigma_a)
+relative_a = sigma_a / a
+print("relative_a:", relative_a)
