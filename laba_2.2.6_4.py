@@ -188,5 +188,9 @@ print("relative_W:", relative_W)
 
 print()
 print("schedule")
+cnt = 0
 for i in range(N):
-    print(arx[i], lnu[i], arx[i] * a + b)
+    cnt += 1
+    print(np.round(arx[i] * 10**4, 2), np.round(lnu[i], 2), np.round(arx[i] * a + b, 2))
+    if cnt % 5 == 0:
+        print()
