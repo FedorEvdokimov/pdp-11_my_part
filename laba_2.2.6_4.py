@@ -180,3 +180,13 @@ sigma_a = np.sqrt(sigma_a / N)
 print("sigma_a:", sigma_a)
 relative_a = sigma_a / a
 print("relative_a:", relative_a)
+
+sigma_W = k * sigma_a
+print("sigma_W:", sigma_W)
+relative_W = sigma_W / W
+print("relative_W:", relative_W)
+
+print()
+print("schedule")
+for i in range(N):
+    print(arx[i], lnu[i], arx[i] * a + b)
