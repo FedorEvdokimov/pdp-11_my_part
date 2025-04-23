@@ -145,10 +145,10 @@ lnu3 = np.log(nu3)
 lnu4 = np.log(nu4)
 lnu = np.hstack((lnu1, lnu2, lnu3, lnu4))
 
-T1 = 28.57
-T2 = 32.00
-T3 = 36.00
-T4 = 40.00
+T1 = 28.57 + 273.15
+T2 = 32.00 + 273.15
+T3 = 36.00 + 273.15
+T4 = 40.00 + 273.15
 
 ar1 = [1 / T1] * 5
 ar2 = [1 / T2] * 5
@@ -159,11 +159,12 @@ ar2 = np.array(ar2)
 ar3 = np.array(ar3)
 ar4 = np.array(ar4)
 arx = np.hstack((ar1, ar2, ar3, ar4))
-print(arx)
 
 a, b = MNK(arx, lnu)
 print("a b:", a, b)
 
-
+k = 1.38 / 10**23 #Дж/К
+W = k * a
+print("W:", W, "Джоулей") #в Джоулях
 
 
