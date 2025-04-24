@@ -201,3 +201,13 @@ x = [1/T1, 1/T2, 1/T3, 1/T4]
 y = [np.mean(lnu[:5]), np.mean([lnu[5:10]]), np.mean(lnu[10:15]), np.mean(lnu[15:])]
 for i in range(4):
     print(np.round(x[i] * 10**4, 2), np.round(y[i], 2))
+
+"""
+Считаем погрешность для ln(nui)  - для крестиков
+"""
+
+print()
+mean_y = np.mean(lnu)
+Sy = np.sum((lnu - mean_y)**2) / N
+sigma_y = np.sqrt(Sy)
+print("sigma_y:", sigma_y)
