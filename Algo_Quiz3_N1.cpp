@@ -6,7 +6,7 @@
 using namespace std;
 
 // Функция для нахождения минимального количества разбиений
-int minPalindromicPartitions(const string& s) {
+int minPal(const string& s) {
     int n = s.length();
     vector<vector<bool>> isPalindrome(n, vector<bool>(n, false));
     vector<int> dp(n);
@@ -52,7 +52,7 @@ int main() {
     //cout << "Input string: ";
     //cin >> input;
 
-    int result = minPalindromicPartitions(input);
+    int result = minPal(input);
 
     cout << "MIN RAZB NUM: " << result << endl;
 
